@@ -1,0 +1,21 @@
+{
+  "name": "clax",
+  "version": "0.0.1",
+  "description": "A WebSocket protocol layer library",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script/register -R spec"
+  },
+  "keywords": [
+    "websocket",
+    "protocol"
+  ],
+  "author": "",
+  "license": "LGPL",
+  "devDependencies": {
+    "chai": "^1.9.0",
+    "mocha": "^1.17.1",
+    "sinon-chai": "^2.5.0",
+    "sinon": "^1.8.2"
+  }
+}
