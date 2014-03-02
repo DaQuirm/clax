@@ -2,15 +2,19 @@
   "name": "clax",
   "version": "0.0.1",
   "description": "A WebSocket protocol layer library",
+  "author": "DaQuirm <leo.daquirm@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DaQuirm/clax"
+  },
   "main": "index.js",
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script/register -R spec"
+    "test": "mocha --compilers coffee:coffee-script/register -R nyan"
   },
   "keywords": [
     "websocket",
     "protocol"
   ],
-  "author": "",
   "license": "LGPL",
   "devDependencies": {
     "chai": "^1.9.0",
