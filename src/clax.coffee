@@ -1,13 +1,17 @@
 class Clax
 
-	codes =
-		LEFT:  37
-		UP:    38
-		RIGHT: 39
-		DOWN:  40
-		SPACE: 32
+	constants =
+		MSG_SEPARATOR: ':'
 
-	@[name] = constant for constant, name of constants
+	@[name] = constant for name, constant of constants
+
+	@errors =
+		ACTION_NOT_CALLABLE:  'Action is not a method of the controller'
+		ACTION_NOT_FOUND:     'Action is not found'
+		BAD_MSG_FORMAT:       'Bad `msg` field format'
+		CONTROLLER_NOT_FOUND: 'Controller is not found'
+		INVALID_JSON:         'Invalid JSON'
+		NO_MSG_FIELD:         'Message has no `msg` field'
 
 	@use: (controllers...)->
 		@controllers = {}
@@ -15,11 +19,23 @@ class Clax
 			@controllers[controller.name.toLowerCase()] = controller
 
 	@parse: (message) ->
-		# try
-		#   @json = JSON.parse message
-		# catch ex
-		#   throw new Error 'Invalid JSON :('
+		json = null
+		switch typeof message
+			when 'string'
+				try
+					json = JSON.parse message
+				catch ex
+					throw new Error Clax.errors.INVALID_JSON
+			when 'object'
+				json = message
 
+		throw new Error Clax.errors.NO_MSG_FIELD if not ('msg' of json)
+		[controller, action] = json.msg.split Clax.MSG_SEPARATOR
+		throw new Error Clax.errors.BAD_MSG_FORMAT if not controller? or not action?
+
+		controller: controller
+		action:     action
+		message:    json
 
 	@validate: ->
 

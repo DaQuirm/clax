@@ -10,7 +10,7 @@ describe 'Clax', ->
 
 	class Star
 		@shine: ({brightness}) ->
-			exploded:(if brightness > 5 then yes else no)
+			exploded: brightness > 5
 	class Sun extends Star
 		radius: 695500
 	class Moon
@@ -28,7 +28,7 @@ describe 'Clax', ->
 			message =
 				msg: 'app:action'
 				data:
-					property: value
+					property: 'value'
 			message_string = JSON.stringify message
 			parsed_message = Clax.parse message_string
 			parsed_message.should.deep.equal
@@ -36,13 +36,37 @@ describe 'Clax', ->
 				action: 'action'
 				message: message
 
-		it 'throws an exception if parsing fails', ->
+		it 'throws an exception if JSON parsing fails', ->
 			message =
 				msg: 'app:action'
 				data:
-					property: value
+					property: 'value'
 			message_string = "#{JSON.stringify message}!!!"
-			(-> Clax.parse message_string).should.throw SyntaxError
+			(-> Clax.parse message_string).should.throw Error, Clax.errors.INVALID_JSON
+
+		it 'parses message objects as well', ->
+			message =
+				msg: 'app:action'
+				data:
+					property: 'value'
+			parsed_message = Clax.parse message
+			parsed_message.should.deep.equal
+				controller: 'app'
+				action: 'action'
+				message: message
+
+		it 'throws an exception if message doesn\'t have a `msg` field', ->
+			message =
+				data:
+					property: 'value'
+			(-> Clax.parse message).should.throw Error, Clax.errors.NO_MSG_FIELD
+
+		it 'throws an exception if message\'s `msg` field doesn\'t conform to the `controller-separator-action` format', ->
+			message =
+				msg: 'action'
+				data:
+					property: 'value'
+			(-> Clax.parse message).should.throw Error, Clax.errors.BAD_MSG_FORMAT
 
 	describe 'validate', ->
 		before ->
@@ -52,7 +76,7 @@ describe 'Clax', ->
 			message =
 				msg: 'app:action'
 				data:
-					property: value
+					property: 'value'
 			result = Clax.validate message
 			result.should.be.an 'object'
 
@@ -70,7 +94,7 @@ describe 'Clax', ->
 			result = Clax.validate message
 			result.valid.should.deep.equal
 				valid: no
-				error: Clax.CONTROLLER_NOT_FOUND
+				error: Clax.errors.CONTROLLER_NOT_FOUND
 				message: message
 
 		it 'fails message validation if specified action isn\'t found in registered controllers', ->
@@ -80,7 +104,7 @@ describe 'Clax', ->
 			result = Clax.validate message
 			result.valid.should.deep.equal
 				valid: no
-				error: Clax.ACTION_NOT_FOUND
+				error: Clax.errors.ACTION_NOT_FOUND
 				message: message
 
 		it 'fails message validation if specified controller action isn\'t a method', ->
@@ -90,7 +114,7 @@ describe 'Clax', ->
 			result = Clax.validate message
 			result.valid.should.deep.equal
 				valid: no
-				error: Clax.ACTION_NOT_CALLABLE
+				error: Clax.errors.ACTION_NOT_CALLABLE
 				message: message
 
 	describe 'process', ->
@@ -109,5 +133,5 @@ describe 'Clax', ->
 				brightness: 10
 			response = Clax.process message
 			response.should.deep.equal
-				error: Clax.ACTION_NOT_FOUND
+				error: Clax.errors.ACTION_NOT_FOUND
 				message: message
