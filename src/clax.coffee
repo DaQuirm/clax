@@ -50,6 +50,15 @@ class Clax
 		result.valid = not result.error?
 		result
 
-	@process: ->
+	@process: (message) ->
+		message = @parse message
+		{valid, error} = @validate message
+		{controller, action, message} = message
+		if valid
+			@controllers[controller][action] message
+		else
+			error: error
+			message: message
+
 
 module.exports = Clax

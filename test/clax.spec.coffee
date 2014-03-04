@@ -11,15 +11,17 @@ describe 'Clax', ->
 	class Star
 		@shine: ({brightness}) ->
 			exploded: brightness > 5
+
 	class Sun extends Star
 		@radius: 695500
+
 	class Moon
 
 	describe 'use', ->
 		it 'sets a list of constructors as controller hash by lowercasing constructor names', ->
 			Clax.use Sun, Moon, Star
 			Clax.controllers.should.deep.equal
-				sun: Sun
+				sun:  Sun
 				moon: Moon
 				star: Star
 
@@ -124,10 +126,12 @@ describe 'Clax', ->
 			message =
 				msg: 'sun:shine'
 				brightness: 4
-			spy = Sinon.spy Sun.shine
+			spy = Sinon.spy Sun, 'shine'
 			response = Clax.process message
+			do Sun.shine.restore
 			spy.should.have.been.calledWith message
 			response.should.deep.equal exploded:no
+
 
 		it 'returns an error if message isn\'t valid', ->
 			message =
