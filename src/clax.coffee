@@ -37,7 +37,18 @@ class Clax
 		action:     action
 		message:    json
 
-	@validate: ->
+	@validate: ({controller, action, message}) ->
+		result = message:message
+		error =
+			unless controller of @controllers
+				Clax.errors.CONTROLLER_NOT_FOUND
+			else unless action of @controllers[controller]
+				Clax.errors.ACTION_NOT_FOUND
+			else unless typeof @controllers[controller][action] is 'function'
+				Clax.errors.ACTION_NOT_CALLABLE
+		result.error = error if error?
+		result.valid = not result.error?
+		result
 
 	@process: ->
 

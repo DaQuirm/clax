@@ -12,7 +12,7 @@ describe 'Clax', ->
 		@shine: ({brightness}) ->
 			exploded: brightness > 5
 	class Sun extends Star
-		radius: 695500
+		@radius: 695500
 	class Moon
 
 	describe 'use', ->
@@ -72,27 +72,29 @@ describe 'Clax', ->
 		before ->
 			Clax.use Star, Sun, Moon
 
-		it 'checks if an object is a valid protocol message', ->
+		it 'checks if a parsing result is a valid protocol controller action', ->
 			message =
 				msg: 'app:action'
 				data:
 					property: 'value'
-			result = Clax.validate message
+			result = Clax.validate Clax.parse message
 			result.should.be.an 'object'
 
 		it 'returns an object whose `valid` field should equal true for valid messages and false otherwise', ->
 			message =
 				msg: 'star:shine'
 				brightness: 10
-			result = Clax.validate message
-			result.should.deep.equal valid: yes
+			result = Clax.validate Clax.parse message
+			result.should.deep.equal
+				valid: yes
+				message: message
 
 		it 'fails message validation if specified controller isn\'t registered', ->
 			message =
 				msg: 'mars:shine'
 				brightness: 10
-			result = Clax.validate message
-			result.valid.should.deep.equal
+			result = Clax.validate Clax.parse message
+			result.should.deep.equal
 				valid: no
 				error: Clax.errors.CONTROLLER_NOT_FOUND
 				message: message
@@ -101,8 +103,8 @@ describe 'Clax', ->
 			message =
 				msg: 'star:burst'
 				brightness: 10
-			result = Clax.validate message
-			result.valid.should.deep.equal
+			result = Clax.validate Clax.parse message
+			result.should.deep.equal
 				valid: no
 				error: Clax.errors.ACTION_NOT_FOUND
 				message: message
@@ -111,8 +113,8 @@ describe 'Clax', ->
 			message =
 				msg: 'sun:radius'
 				brightness: 10
-			result = Clax.validate message
-			result.valid.should.deep.equal
+			result = Clax.validate Clax.parse message
+			result.should.deep.equal
 				valid: no
 				error: Clax.errors.ACTION_NOT_CALLABLE
 				message: message
