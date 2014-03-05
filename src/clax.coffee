@@ -29,7 +29,7 @@ class Clax
 			when 'object'
 				json = message
 
-		throw new Error Clax.errors.NO_MSG_FIELD if not ('msg' of json)
+		throw new Error Clax.errors.NO_MSG_FIELD unless 'msg' of json
 		[controller, action] = json.msg.split Clax.MSG_SEPARATOR
 		throw new Error Clax.errors.BAD_MSG_FORMAT if not controller? or not action?
 
