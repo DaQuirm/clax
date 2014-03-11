@@ -18,14 +18,14 @@ gulp.task 'coffee', ->
 		.pipe browserify
 			transform: ['coffeeify'],
 			extensions: ['.coffee']
-		.on 'error', ({message}) -> console.log message
+		.on 'error', notify.onError 'Error: <%= error.message %>'
 		.pipe rename 'client.js'
 		.pipe gulp.dest './src'
 
 gulp.task 'stylus', ->
 	gulp.src './stylesheets/*.styl'
 		.pipe do stylus
-		.on 'error', ({message}) -> console.log message
+		.on 'error', notify.onError 'Error: <%= error.message %>'
 		.pipe gulp.dest './stylesheets'
 
 gulp.task 'watch', ->
