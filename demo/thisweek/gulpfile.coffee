@@ -23,7 +23,7 @@ gulp.task 'coffee', ->
 		.pipe gulp.dest './src'
 
 gulp.task 'stylus', ->
-	gulp.src './stylesheets/*.styl'
+	gulp.src './stylesheets/thisweek.styl'
 		.pipe do stylus
 		.on 'error', notify.onError 'Error: <%= error.message %>'
 		.pipe gulp.dest './stylesheets'
