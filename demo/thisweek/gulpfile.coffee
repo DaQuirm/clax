@@ -28,6 +28,6 @@ gulp.task 'stylus', ->
 		.on 'error', notify.onError 'Error: <%= error.message %>'
 		.pipe gulp.dest './stylesheets'
 
-gulp.task 'watch', ->
+gulp.task 'watch', ['coffee', 'stylus'], ->
 	gulp.watch './src/client.coffee', ['coffee']
 	gulp.watch './stylesheets/*.styl', ['stylus']
