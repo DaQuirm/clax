@@ -25,13 +25,14 @@ body
 		$button-width = 36px
 		$button-height = 36px
 
-		.round-button
+		button
 			width: $button-width
 			height: $button-height
 			vertical-align: middle
 			background: white
 			border: 1px solid #666
 			border-radius: 50%
+			margin-bottom: 1px
 			padding: 0
 			outline: none
 			cursor: pointer
@@ -80,7 +81,7 @@ body
 							height: 60px
 							opacity: 1
 
-						.round-button
+						button
 							background: #b20000
 							border: none
 							color: rgba(0, 0, 0, 0)
@@ -92,22 +93,12 @@ body
 		.create-note
 			flex-basis: $calendar-width
 			text-align: right
-			margin-right: 12px
+			margin-right: 18px
 			font-size: 1rem
 
 			button
-				// round-button()
 				font-size: 1.5rem
-				margin-right: 22px
-
-			&:hover
-				&::after
-					transform: translate(0, 6px)
-
-				button
-					transform: scale(1.35)
-					background: #222
-					color: #ccc
+				margin-right: 20px
 
 	.content
 		flex-grow: 1
