@@ -26,10 +26,9 @@ body
 		$button-height = 36px
 
 		.round-button
-			position: relative
 			width: $button-width
 			height: $button-height
-			// vertical-align: middle
+			vertical-align: middle
 			background: white
 			border: 1px solid #666
 			border-radius: 50%
@@ -38,30 +37,17 @@ body
 			cursor: pointer
 			transition: all 0.3s
 
-			&::before
-				content: attr(data-value)
-
-			&::after
-				content: attr(data-label)
-				display: block
-				position: absolute
-				width: 100%
-				transform: translate(0, 75%)
+			& + .button-label
 				font-size: 0.9rem
+				transition: all 0.3s
 
 			&:hover
 				transform: scale(1.35)
+				background: #222
+				color: #ccc
 
-				&::before
-					color: #ccc
-				// color: #ccc
-
-				// &::before
-				// 	transform: scale(1.35)
-				// 	background: #222
-
-
-
+				& + .button-label
+					transform: translate(0, 8px)
 
 		.month-name
 			flex-basis: $calendar-width
@@ -89,33 +75,19 @@ body
 						background: #222
 						transition: all 0.2s easeInOutQuad
 
-					// &::after
-					// 	display: block
-					// 	content: attr(data-day)
-					// 	transition: all 0.2s easeInOutQuad
-
-					&:hover
-						&::after
-							transform: translate(0, 6px)
-
-						// button
-						// 	transform: scale(1.35)
-						// 	background: #222
-						// 	color: #ccc
-
 					&.selected
 						&::before
 							height: 60px
 							opacity: 1
 
-						&::after
-							transform: translate(0, 50px)
-							color: #ccc
-
-						button
+						.round-button
 							background: #b20000
 							border: none
 							color: rgba(0, 0, 0, 0)
+
+							& + .button-label
+								transform: translate(0, 48px)
+								color: #ccc
 
 		.create-note
 			flex-basis: $calendar-width
