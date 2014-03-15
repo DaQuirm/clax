@@ -33,5 +33,5 @@ gulp.task 'stylus', ->
 		return
 
 gulp.task 'watch', ['connect', 'coffee', 'stylus'], ->
-	gulp.watch './src/client.coffee', ['coffee']
+	gulp.watch './src/*.coffee', ['coffee']
 	gulp.watch './stylesheets/*.styl', ['stylus']
