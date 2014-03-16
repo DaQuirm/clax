@@ -6,12 +6,15 @@ class Clax
 	@[name] = constant for name, constant of constants
 
 	@errors =
-		ACTION_NOT_CALLABLE:  'Action is not a method of the controller'
-		ACTION_NOT_FOUND:     'Action is not found'
-		BAD_MSG_FORMAT:       'Bad `msg` field format'
-		CONTROLLER_NOT_FOUND: 'Controller is not found'
-		INVALID_JSON:         'Invalid JSON'
-		NO_MSG_FIELD:         'Message has no `msg` field'
+		ACTION_NOT_AUTHORIZED: 'Action is not authorized'
+		ACTION_NOT_CALLABLE:   'Action is not a method of the controller'
+		ACTION_NOT_FOUND:      'Action is not found'
+		BAD_MSG_FORMAT:        'Bad `msg` field format'
+		CONTROLLER_NOT_FOUND:  'Controller is not found'
+		INVALID_JSON:          'Invalid JSON'
+		NO_MSG_FIELD:          'Message has no `msg` field'
+
+	@protected: {}
 
 	@use: (controllers...)->
 		@controllers = {}
@@ -55,10 +58,28 @@ class Clax
 		{valid, error} = @validate message
 		{controller, action, message} = message
 		if valid
-			@controllers[controller][action] message
+			protection = @protected[controller]?[action]
+			authorized =
+				if protection?
+					if typeof protection is 'function'
+						protection action, message
+					else if typeof protection is 'boolean'
+						protection
+				else yes
+			if authorized
+				@controllers[controller][action] message
+			else
+				error: Clax.errors.ACTION_NOT_AUTHORIZED
+				message: message
 		else
 			error: error
 			message: message
 
+	@protect: (controller, what, protection) ->
+		controller_name = controller.name.toLowerCase()
+		what = [what] unless Array.isArray what
+		for action in what
+			@protected[controller_name] ?= {}
+			@protected[controller_name][action] = protection
 
 module.exports = Clax

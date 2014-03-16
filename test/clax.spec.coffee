@@ -16,6 +16,17 @@ describe 'Clax', ->
 		@radius: 695500
 
 	class Moon
+		@phase: 'waxing'
+		@authorize: (action, data) =>
+			switch action
+				when 'glow' then @phase isnt 'new'
+				when 'tide' then @phase is 'full'
+
+		@glow: ({color}) ->
+			status: "glowing gently with a hint of #{color}"
+		@tide: ->
+			status: 'tide is coming in!'
+
 
 	describe 'use', ->
 		it 'sets a list of constructors as controller hash by lowercasing constructor names', ->
@@ -141,3 +152,63 @@ describe 'Clax', ->
 			response.should.deep.equal
 				error: Clax.errors.ACTION_NOT_FOUND
 				message: message
+
+	describe 'protect', ->
+		it 'makes a controller method non-invokable as an action', ->
+			Clax.protect Moon, 'authorize', off
+			message =
+				msg: 'moon:authorize'
+				what: 'anything'
+			response = Clax.process message
+			response.should.deep.equal
+				error: Clax.errors.ACTION_NOT_AUTHORIZED
+				message: message
+
+		it 'calls specified authorizing method before invoking an action', ->
+			spy = Sinon.spy Moon, 'authorize'
+			Clax.protect Moon, 'glow', Moon.authorize
+			message =
+				msg: 'moon:glow'
+				color: 'yellow'
+			response = Clax.process message
+			spy.should.have.been.calledWith 'glow', message
+			response.should.deep.equal
+				status: 'glowing gently with a hint of yellow'
+			Moon.phase = 'new'
+			message =
+				msg: 'moon:glow'
+				color: 'yellow'
+			response = Clax.process message
+			spy.should.have.been.calledWith 'glow', message
+			do Moon.authorize.restore
+			response.should.deep.equal
+				error: Clax.errors.ACTION_NOT_AUTHORIZED
+				message: message
+
+		it 'can accept an array of actions to protect', ->
+			spy = Sinon.spy Moon, 'authorize'
+			Clax.protect Moon, ['glow', 'tide'], Moon.authorize
+			Moon.phase = 'new'
+			message =
+				msg: 'moon:glow'
+				color: 'yellow'
+			response = Clax.process message
+			spy.should.have.been.calledWith 'glow', message
+			response.should.deep.equal
+				error: Clax.errors.ACTION_NOT_AUTHORIZED
+				message: message
+			message =
+				msg: 'moon:tide'
+			response = Clax.process message
+			spy.should.have.been.calledWith 'tide', message
+			response.should.deep.equal
+				error: Clax.errors.ACTION_NOT_AUTHORIZED
+				message: message
+			Moon.phase = 'full'
+			message =
+				msg: 'moon:tide'
+			response = Clax.process message
+			spy.should.have.been.calledWith 'tide', message
+			do Moon.authorize.restore
+			response.should.deep.equal
+				status: 'tide is coming in!'
