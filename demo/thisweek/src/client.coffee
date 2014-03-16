@@ -47,6 +47,12 @@ window.addEventListener 'load', ->
 
 	main = document.querySelector 'main'
 	main_rect = do main.getBoundingClientRect
+
+	day_number_node = document.createElement 'div'
+	day_number_node.classList.add 'day-number'
+	day_number_node.textContent = week_data.day
+	main.appendChild day_number_node
+
 	main.addEventListener 'mousedown', (event) ->
 		if event.target.matches '.note'
 			drag_target = event.target
