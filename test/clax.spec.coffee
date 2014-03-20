@@ -26,7 +26,8 @@ describe 'Clax', ->
 			status: "glowing gently with a hint of #{color}"
 		@tide: ->
 			status: 'tide is coming in!'
-
+		@explore: ({spacecraft}, sender) ->
+			status: "#{spacecraft} has landed!"
 
 	describe 'use', ->
 		it 'sets a list of constructors as controller hash by lowercasing constructor names', ->
@@ -143,7 +144,6 @@ describe 'Clax', ->
 			spy.should.have.been.calledWith message
 			response.should.deep.equal exploded:no
 
-
 		it 'returns an error if message isn\'t valid', ->
 			message =
 				msg: 'sun:burst'
@@ -152,6 +152,16 @@ describe 'Clax', ->
 			response.should.deep.equal
 				error: Clax.errors.ACTION_NOT_FOUND
 				message: message
+
+		it 'forwards its second argument to action calls', ->
+			message =
+				msg: 'moon:explore'
+				spacecraft: 'Apollo 11'
+			sender = 'USA'
+			spy = Sinon.spy  Moon, 'explore'
+			Clax.process message, sender
+			do Moon.explore.restore
+			spy.should.have.been.calledWith message, sender
 
 	describe 'protect', ->
 		it 'makes a controller method non-invokable as an action', ->
