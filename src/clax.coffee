@@ -53,7 +53,7 @@ class Clax
 		result.valid = not result.error?
 		result
 
-	@process: (message) ->
+	@process: (message, args...) ->
 		message = @parse message
 		{valid, error} = @validate message
 		{controller, action, message} = message
@@ -67,7 +67,7 @@ class Clax
 						protection
 				else yes
 			if authorized
-				@controllers[controller][action] message
+				@controllers[controller][action] message, args...
 			else
 				error: Clax.errors.ACTION_NOT_AUTHORIZED
 				message: message
