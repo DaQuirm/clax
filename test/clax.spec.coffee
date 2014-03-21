@@ -235,6 +235,33 @@ describe 'Clax', ->
 
 		it 'protects an action or a list of actions for all controllers', ->
 			Clax.protect_all ['glow', 'shine'], off
+
+			error_spy = Sinon.spy Moon, 'error'
 			message =
 				msg: 'moon:glow'
 				color: 'yellow'
+			Clax.process message
+			error_spy.should.have.been.calledWith
+				error: Clax.errors.ACTION_NOT_AUTHORIZED
+				message: message
+			do Moon.error.restore
+
+			error_spy = Sinon.spy Star, 'error'
+			message =
+				msg: 'star:shine'
+				brightness: 5
+			Clax.process message
+			error_spy.should.have.been.calledWith
+				error: Clax.errors.ACTION_NOT_AUTHORIZED
+				message: message
+			do Star.error.restore
+
+			error_spy = Sinon.spy Sun, 'error'
+			message =
+				msg: 'sun:shine'
+				brightness: 7
+			Clax.process message
+			error_spy.should.have.been.calledWith
+				error: Clax.errors.ACTION_NOT_AUTHORIZED
+				message: message
+			do Sun.error.restore

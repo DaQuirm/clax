@@ -1,8 +1,9 @@
 class Clax
 
 	constants =
-		MSG_SEPARATOR: ':'
-		ERROR_ACTION:  'error'
+		MSG_SEPARATOR:    ':'
+		ERROR_ACTION:     'error'
+		EVERY_CONTROLLER: '*'
 
 	@[name] = constant for name, constant of constants
 
@@ -60,15 +61,7 @@ class Clax
 		{controller, action, message} = message
 		error_message = null
 		if valid
-			protection = @protected[controller]?[action]
-			authorized =
-				if protection?
-					if typeof protection is 'function'
-						protection action, message
-					else if typeof protection is 'boolean'
-						protection
-				else yes
-			if authorized
+			if @authorize controller, action, message
 				@controllers[controller][action] message, args...
 			else
 				error_message =
@@ -80,16 +73,35 @@ class Clax
 				message: message
 		@invoke_error_actions error_message, args... if error_message?
 
+	@authorize: (controller, action, message) ->
+		[
+			@protected[Clax.EVERY_CONTROLLER]?[action]
+			@protected[controller]?[action]
+		]
+			.every (item) ->
+				if item?
+					if typeof item is 'function'
+						item action, message
+					else if typeof item is 'boolean'
+						item
+				else yes
 
 	@invoke_error_actions: (message, args...) ->
 		for _, controller of @controllers
 			controller[Clax.ERROR_ACTION] message, args...
 
 	@protect: (controller, what, protection) ->
-		controller_name = controller.name.toLowerCase()
+		controller_name =
+			if controller is Clax.EVERY_CONTROLLER
+				controller
+			else
+				do controller.name.toLowerCase
 		what = [what] unless Array.isArray what
 		for action in what
 			@protected[controller_name] ?= {}
 			@protected[controller_name][action] = protection
+
+	@protect_all: (what, protection) ->
+		@protect Clax.EVERY_CONTROLLER, what, protection
 
 module.exports = Clax
