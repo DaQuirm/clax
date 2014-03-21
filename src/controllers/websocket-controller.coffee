@@ -23,6 +23,8 @@ class WebSocketServer
 	@process_message = (message, connection) ->
 		Clax.process message, connection
 
+exports.WebSocketServer = WebSocketServer
+
 class WebSocketController
 
 	@send = (message, to) ->
@@ -39,5 +41,4 @@ class WebSocketController
 	@error = (message, connection) =>
 		@respond message, connection
 
-module.exports = WebSocketController
-
+exports.WebSocketController = WebSocketController
