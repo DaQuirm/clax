@@ -190,12 +190,15 @@ describe 'Clax', ->
 
 		it 'calls specified authorizing method before invoking an action', ->
 			Clax.protect Moon, 'glow', Moon.authorize
+
 			message =
 				msg: 'moon:glow'
 				color: 'yellow'
 			Clax.process message
 			authorize_spy.should.have.been.calledWith 'glow', message
+
 			Moon.phase = 'new'
+
 			message =
 				msg: 'moon:glow'
 				color: 'yellow'
@@ -208,6 +211,7 @@ describe 'Clax', ->
 		it 'can accept an array of actions to protect', ->
 			Clax.protect Moon, ['glow', 'tide'], Moon.authorize
 			Moon.phase = 'new'
+
 			message =
 				msg: 'moon:glow'
 				color: 'yellow'
@@ -216,6 +220,7 @@ describe 'Clax', ->
 			error_spy.should.have.been.calledWith
 				error: Clax.errors.ACTION_NOT_AUTHORIZED
 				message: message
+
 			message =
 				msg: 'moon:tide'
 			Clax.process message
@@ -223,7 +228,9 @@ describe 'Clax', ->
 			error_spy.should.have.been.calledWith
 				error: Clax.errors.ACTION_NOT_AUTHORIZED
 				message: message
+
 			Moon.phase = 'full'
+
 			message =
 				msg: 'moon:tide'
 			Clax.process message
