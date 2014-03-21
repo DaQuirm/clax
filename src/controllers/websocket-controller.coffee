@@ -36,5 +36,8 @@ class WebSocketController
 			.filter filter
 			.forEach (connection) => @send message, connection
 
+	@error = (message, connection) =>
+		@respond message, connection
+
 module.exports = WebSocketController
 
