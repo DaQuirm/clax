@@ -2,6 +2,7 @@ class Clax
 
 	constants =
 		MSG_SEPARATOR: ':'
+		ERROR_ACTION:  'error'
 
 	@[name] = constant for name, constant of constants
 
@@ -57,6 +58,7 @@ class Clax
 		message = @parse message
 		{valid, error} = @validate message
 		{controller, action, message} = message
+		error_message = null
 		if valid
 			protection = @protected[controller]?[action]
 			authorized =
@@ -69,11 +71,19 @@ class Clax
 			if authorized
 				@controllers[controller][action] message, args...
 			else
-				error: Clax.errors.ACTION_NOT_AUTHORIZED
-				message: message
+				error_message =
+					error: Clax.errors.ACTION_NOT_AUTHORIZED
+					message: message
 		else
-			error: error
-			message: message
+			error_message =
+				error: error
+				message: message
+		@invoke_error_actions error_message, args... if error_message?
+
+
+	@invoke_error_actions: (message, args...) ->
+		for _, controller of @controllers
+			controller[Clax.ERROR_ACTION] message, args...
 
 	@protect: (controller, what, protection) ->
 		controller_name = controller.name.toLowerCase()

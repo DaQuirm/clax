@@ -11,12 +11,14 @@ describe 'Clax', ->
 	class Star
 		@shine: ({brightness}) ->
 			exploded: brightness > 5
+		@error: (message) ->
 
 	class Sun extends Star
 		@radius: 695500
 
 	class Moon
 		@phase: 'waxing'
+		@error: (message) ->
 		@authorize: (action, data) =>
 			switch action
 				when 'glow' then @phase isnt 'new'
@@ -139,86 +141,100 @@ describe 'Clax', ->
 				msg: 'sun:shine'
 				brightness: 4
 			spy = Sinon.spy Sun, 'shine'
-			response = Clax.process message
+			Clax.process message
 			do Sun.shine.restore
 			spy.should.have.been.calledWith message
-			response.should.deep.equal exploded:no
 
-		it 'returns an error if message isn\'t valid', ->
+		it 'invokes the `error` action if it\'s present on any controller and message is not valid', ->
 			message =
 				msg: 'sun:burst'
 				brightness: 10
-			response = Clax.process message
-			response.should.deep.equal
+			spy = Sinon.spy Star, 'error'
+			Clax.process message
+			spy.should.have.been.calledWith
 				error: Clax.errors.ACTION_NOT_FOUND
 				message: message
+			do Star.error.restore
 
 		it 'forwards its second argument to action calls', ->
 			message =
 				msg: 'moon:explore'
 				spacecraft: 'Apollo 11'
 			sender = 'USA'
-			spy = Sinon.spy  Moon, 'explore'
+			spy = Sinon.spy Moon, 'explore'
 			Clax.process message, sender
 			do Moon.explore.restore
 			spy.should.have.been.calledWith message, sender
 
 	describe 'protect', ->
+		error_spy = null
+		authorize_spy = null
+
+		beforeEach ->
+			error_spy = Sinon.spy Moon, 'error'
+			authorize_spy = Sinon.spy Moon, 'authorize'
+
+		afterEach ->
+			do Moon.authorize.restore
+			do Moon.error.restore
+
 		it 'makes a controller method non-invokable as an action', ->
 			Clax.protect Moon, 'authorize', off
 			message =
 				msg: 'moon:authorize'
 				what: 'anything'
-			response = Clax.process message
-			response.should.deep.equal
+			Clax.process message
+			error_spy.should.have.been.calledWith
 				error: Clax.errors.ACTION_NOT_AUTHORIZED
 				message: message
 
 		it 'calls specified authorizing method before invoking an action', ->
-			spy = Sinon.spy Moon, 'authorize'
 			Clax.protect Moon, 'glow', Moon.authorize
 			message =
 				msg: 'moon:glow'
 				color: 'yellow'
-			response = Clax.process message
-			spy.should.have.been.calledWith 'glow', message
-			response.should.deep.equal
-				status: 'glowing gently with a hint of yellow'
+			Clax.process message
+			authorize_spy.should.have.been.calledWith 'glow', message
 			Moon.phase = 'new'
 			message =
 				msg: 'moon:glow'
 				color: 'yellow'
-			response = Clax.process message
-			spy.should.have.been.calledWith 'glow', message
-			do Moon.authorize.restore
-			response.should.deep.equal
+			Clax.process message
+			authorize_spy.should.have.been.calledWith 'glow', message
+			error_spy.should.have.been.calledWith
 				error: Clax.errors.ACTION_NOT_AUTHORIZED
 				message: message
 
 		it 'can accept an array of actions to protect', ->
-			spy = Sinon.spy Moon, 'authorize'
 			Clax.protect Moon, ['glow', 'tide'], Moon.authorize
 			Moon.phase = 'new'
 			message =
 				msg: 'moon:glow'
 				color: 'yellow'
-			response = Clax.process message
-			spy.should.have.been.calledWith 'glow', message
-			response.should.deep.equal
+			Clax.process message
+			authorize_spy.should.have.been.calledWith 'glow', message
+			error_spy.should.have.been.calledWith
 				error: Clax.errors.ACTION_NOT_AUTHORIZED
 				message: message
 			message =
 				msg: 'moon:tide'
-			response = Clax.process message
-			spy.should.have.been.calledWith 'tide', message
-			response.should.deep.equal
+			Clax.process message
+			authorize_spy.should.have.been.calledWith 'tide', message
+			error_spy.should.have.been.calledWith
 				error: Clax.errors.ACTION_NOT_AUTHORIZED
 				message: message
 			Moon.phase = 'full'
 			message =
 				msg: 'moon:tide'
-			response = Clax.process message
-			spy.should.have.been.calledWith 'tide', message
-			do Moon.authorize.restore
-			response.should.deep.equal
-				status: 'tide is coming in!'
+			Clax.process message
+			authorize_spy.should.have.been.calledWith 'tide', message
+
+	describe 'protect_all', ->
+		before ->
+			Clax.protection = {}
+
+		it 'protects an action or a list of actions for all controllers', ->
+			Clax.protect_all ['glow', 'shine'], off
+			message =
+				msg: 'moon:glow'
+				color: 'yellow'
