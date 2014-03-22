@@ -2,10 +2,10 @@ Clax   = require '../clax.coffee'
 
 class WebSocketController
 
-	@connections = {}
+	@connections = []
 
 	@add_connection: (connection) ->
-		@connections[connection.remoteAddress] = connection
+		@connections.push connection
 
 	@send: (message, to) ->
 		to.sendUTF JSON.stringify message
@@ -14,9 +14,9 @@ class WebSocketController
 		@send message, connection
 
 	@broadcast: (message, filter = ->yes) =>
-		@connections
-			.filter filter
-			.forEach (connection) => @send message, connection
+		console.log "Broadcasting #{JSON.stringify message}"
+		for connection in @connections when filter connection
+			@send message, connection
 
 	@error: (message, connection) =>
 		@respond message, connection

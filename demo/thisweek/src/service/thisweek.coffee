@@ -3,7 +3,11 @@ Clax = require '../../../../src/clax'
 
 class Thisweek extends WebSocketController
 
-	@broadcast: (message) ->
-		super message
+	@broadcast: (message, connection) ->
+		message.msg = "remote:#{message.action}"
+		# message.id  = "#{@connections.indexOf connection}[#{message.id}]"
+		delete message.action
+		super message, (item) ->
+			item isnt connection
 
 module.exports = Thisweek

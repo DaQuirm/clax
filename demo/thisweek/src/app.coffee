@@ -2,8 +2,10 @@ class App
 
 	constructor: ->
 		@notes = []
-		@active_day = 'Mon'
+		week_names = (do @get_week_data).short_week_names
+		@active_day = week_names[(new Date).getDay() - 1]
 		@visible_notes = []
+		@hidden_notes = []
 
 	get_week_data: ->
 		long_month_names = [
@@ -20,12 +22,12 @@ class App
 		day: do today.getDate
 		week_range: [last_monday_date..last_monday_date + 6]
 
-	create_note: ->
+	create_note: (id = @notes.length, day = @active_day) ->
 		note =
 			header: 'Note'
 			article: 'Lorem ipsum'
-			day: @active_day
-			id: @notes.length
+			day: day
+			id: id
 			x: 0
 			y: 0
 		@notes.push note
@@ -41,6 +43,7 @@ class App
 
 	switch_day: (day) ->
 		@active_day = day
+		@hidden_notes = @visible_notes
 		@visible_notes = @notes.filter (note) => note.day is @active_day
 
 module.exports = App
