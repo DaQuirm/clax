@@ -6,6 +6,7 @@
     "gulp-stylus": "0.0.14",
     "gulp-notify": "^1.1.1",
     "gulp-connect": "^1.0.7",
-    "coffeeify": "^0.6.0"
+    "coffeeify": "^0.6.0",
+    "websocket": "^1.0.8"
   }
 }
