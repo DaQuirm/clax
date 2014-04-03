@@ -24,6 +24,10 @@ header()
 			cursor: pointer
 			transition: all 0.3s
 
+			// Firefox focus dotted outline fix
+			&::-moz-focus-inner
+				border: 0
+
 			& + .button-label
 				font-size: 0.9rem
 				transition: all 0.3s
