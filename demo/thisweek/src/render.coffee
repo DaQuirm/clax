@@ -3,8 +3,12 @@ class Render
 		@note_nodes = []
 		@main = document.querySelector 'main'
 		@main_rect = do @main.getBoundingClientRect
+		@header_month_name = document.querySelector '.month-name'
 		@week_nav = document.querySelector 'nav > ul'
 		@create_note_button = document.querySelector '.create-note > button'
+
+	@month_name: (name) ->
+		@header_month_name.textContent = name
 
 	@nav: (week_data, active_day) ->
 		for day, index in week_data.week_range

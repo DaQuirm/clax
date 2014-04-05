@@ -28,6 +28,7 @@ window.addEventListener 'load', ->
 
 	week_data = do App.get_week_data
 	Render.nav week_data, App.active_day
+	Render.month_name week_data.long_month
 
 	Render.week_nav.addEventListener 'click', (event) ->
 		if event.target.matches 'button'
