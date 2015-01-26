@@ -1,0 +1,61 @@
+@import '../bower_components/nib'
+@import 'easing'
+@import 'header'
+
+global-reset()
+
+$calendar-width = 310px
+
+html, body
+	height: 100%
+
+body
+	display: flex
+	flex-direction: column
+	margin: 0
+	font-family: Arial, sans-serif
+
+	header()
+
+	main
+		flex-grow: 1
+		position: relative
+		background: #222
+
+		.day-number
+			width: $calendar-width
+			text-align: center
+			font-size: 9rem
+			color: #444
+
+		.note
+			position: absolute
+			top: 0
+			left: 0
+			width: 220px
+			height: 120px
+			box-sizing: border-box
+			padding: 8px
+			opacity: 1
+			font-size: 0.9rem
+			background: linear-gradient(to bottom, #fff -33%, #f90 33%, #fff 166%)
+			-webkit-mask-image: -webkit-linear-gradient(top, black, rgba(0,0,0,0) 105%)
+			cursor: move
+			transition: opacity 0.3s easeInOutQuad
+
+			&.hidden
+				opacity: 0
+
+			header
+				float: left
+				font-weight: bold
+				outline: none
+
+			time
+				float: right
+				font-weight: bold
+
+			article
+				clear: both
+				padding-top: 8px
+				outline: none

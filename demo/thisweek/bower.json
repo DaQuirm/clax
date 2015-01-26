@@ -1,0 +1,6 @@
+{
+  "name": "thisweek",
+  "devDependencies": {
+    "nib": "~1.0.2"
+  }
+}
