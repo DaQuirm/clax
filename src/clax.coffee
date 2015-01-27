@@ -106,4 +106,4 @@ class Clax
 
 module.exports =
 	Clax: Clax
-	WebSocketController: require './controllers/websocket-controller'
+	WebSocketController: require "#{__dirname}/controllers/websocket-controller"

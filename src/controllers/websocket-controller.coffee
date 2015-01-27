@@ -1,5 +1,3 @@
-Clax   = require '../clax.coffee'
-
 class WebSocketController
 
 	@connections = []
@@ -21,4 +19,4 @@ class WebSocketController
 	@error: (message, connection) =>
 		@respond message, connection
 
-exports = WebSocketController
+exports.WebSocketController = WebSocketController
