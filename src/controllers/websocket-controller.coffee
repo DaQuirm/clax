@@ -19,4 +19,4 @@ class WebSocketController
 	@error: (message, connection) =>
 		@respond message, connection
 
-exports.WebSocketController = WebSocketController
+module.exports = WebSocketController
