@@ -4,7 +4,7 @@ sinon_chai = require 'sinon-chai'
 do Chai.should
 Chai.use sinon_chai
 
-Clax = require '../src/clax.coffee'
+{Clax} = require '../src/clax.coffee'
 
 describe 'Clax', ->
 
