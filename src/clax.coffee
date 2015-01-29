@@ -104,6 +104,4 @@ class Clax
 	@protect_all: (what, protection) ->
 		@protect Clax.EVERY_CONTROLLER, what, protection
 
-module.exports =
-	Clax: Clax
-	WebSocketController: require "#{__dirname}/controllers/websocket-controller"
+module.exports = Clax
