@@ -1,6 +1,6 @@
 {
   "name": "clax",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A WebSocket protocol layer library",
   "author": "DaQuirm <leo.daquirm@gmail.com",
   "repository": {
